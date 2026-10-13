@@ -1,0 +1,203 @@
+{
+  "run_at": "2026-10-04T19:09:03+00:00",
+  "connection": {
+    "config_file": ".mcp.json",
+    "server": "campus-customs",
+    "transport": "stdio",
+    "client": "Claude Code (native MCP tool calls in a session opened in Homework/hw5)"
+  },
+  "database": "data/campus_customs_new.db",
+  "tools_listed": [
+    "check_inventory",
+    "get_invoice_status",
+    "get_lease_details"
+  ],
+  "tests": [
+    {
+      "test": 1,
+      "ticket": 101,
+      "prompt": "Ticket 101: Tauhid Zaman wants 1 Classic Bulldog Tee (CC-TEE-WHITE) in size S. How many are in stock?",
+      "tool": "mcp__campus-customs__check_inventory",
+      "arguments": {
+        "sku": "CC-TEE-WHITE",
+        "size": "S"
+      },
+      "tool_output": {
+        "found": true,
+        "sku": "CC-TEE-WHITE",
+        "name": "Classic Bulldog Tee",
+        "rows": [
+          {
+            "sku": "CC-TEE-WHITE",
+            "name": "Classic Bulldog Tee",
+            "size": "S",
+            "qty": 0,
+            "location": "Aisle B"
+          }
+        ],
+        "total_qty": 0
+      },
+      "db_check": {
+        "query": "SELECT sku, name, size, qty, location FROM inventory WHERE sku = ? AND size = ?",
+        "params": [
+          "CC-TEE-WHITE",
+          "S"
+        ],
+        "rows": [
+          {
+            "sku": "CC-TEE-WHITE",
+            "name": "Classic Bulldog Tee",
+            "size": "S",
+            "qty": 0,
+            "location": "Aisle B"
+          }
+        ],
+        "desk_date_today": "2026-08-31"
+      },
+      "matches_db": true
+    },
+    {
+      "test": 2,
+      "ticket": 103,
+      "prompt": "Ticket 103: Yale AI Club wants 20 Basic Hoodie Big Yale (CC-HOOD-NAVY) in size M. How many are in stock?",
+      "tool": "mcp__campus-customs__check_inventory",
+      "arguments": {
+        "sku": "CC-HOOD-NAVY",
+        "size": "M"
+      },
+      "tool_output": {
+        "found": true,
+        "sku": "CC-HOOD-NAVY",
+        "name": "Basic Hoodie Big Yale",
+        "rows": [
+          {
+            "sku": "CC-HOOD-NAVY",
+            "name": "Basic Hoodie Big Yale",
+            "size": "M",
+            "qty": 8,
+            "location": "Aisle A"
+          }
+        ],
+        "total_qty": 8
+      },
+      "db_check": {
+        "query": "SELECT sku, name, size, qty, location FROM inventory WHERE sku = ? AND size = ?",
+        "params": [
+          "CC-HOOD-NAVY",
+          "M"
+        ],
+        "rows": [
+          {
+            "sku": "CC-HOOD-NAVY",
+            "name": "Basic Hoodie Big Yale",
+            "size": "M",
+            "qty": 8,
+            "location": "Aisle A"
+          }
+        ],
+        "desk_date_today": "2026-08-31"
+      },
+      "matches_db": true
+    },
+    {
+      "test": 3,
+      "ticket": 101,
+      "prompt": "Ticket 101 links to invoice 501. Is it paid, is it overdue as of the shop's desk date, and is the vendor blocked from shipping?",
+      "tool": "mcp__campus-customs__get_invoice_status",
+      "arguments": {
+        "invoice_id": 501
+      },
+      "tool_output": {
+        "found": true,
+        "invoice": {
+          "id": 501,
+          "vendor_id": 1,
+          "amount": 840,
+          "due_date": "2026-08-28",
+          "status": "open",
+          "description": "Rush reprint CC-TEE-WHITE S",
+          "vendor_name": "Bulldog Print Co",
+          "vendor_specialty": "apparel reprint",
+          "vendor_lead_days": 5
+        },
+        "desk_date_today": "2026-08-31",
+        "is_overdue": true,
+        "days_past_due": 3,
+        "vendor_open_invoice_ids": [
+          501
+        ],
+        "vendor_blocked": true
+      },
+      "db_check": {
+        "query": "SELECT i.id, i.vendor_id, i.amount, i.due_date, i.status, i.description, v.name AS vendor_name, v.specialty AS vendor_specialty, v.lead_days AS vendor_lead_days FROM invoices i JOIN vendors v ON v.id = i.vendor_id WHERE i.id = ?",
+        "params": [
+          501
+        ],
+        "rows": [
+          {
+            "id": 501,
+            "vendor_id": 1,
+            "amount": 840.0,
+            "due_date": "2026-08-28",
+            "status": "open",
+            "description": "Rush reprint CC-TEE-WHITE S",
+            "vendor_name": "Bulldog Print Co",
+            "vendor_specialty": "apparel reprint",
+            "vendor_lead_days": 5
+          }
+        ],
+        "desk_date_today": "2026-08-31"
+      },
+      "matches_db": true
+    },
+    {
+      "test": 4,
+      "ticket": 102,
+      "prompt": "Ticket 102: Elm City Properties sent a rent notice for lease 1. How much rent is owed and how many days until it is due from the shop's desk date?",
+      "tool": "mcp__campus-customs__get_lease_details",
+      "arguments": {
+        "lease_id": 1
+      },
+      "tool_output": {
+        "found": true,
+        "lease": {
+          "id": 1,
+          "space_name": "Chapel Street shop",
+          "landlord": "Elm City Properties",
+          "monthly_rent": 2400,
+          "next_due": "2026-09-02",
+          "notes": null
+        },
+        "desk_date_today": "2026-08-31",
+        "days_until_due": 2,
+        "is_past_due": false
+      },
+      "db_check": {
+        "query": "SELECT id, space_name, landlord, monthly_rent, next_due, notes FROM leases WHERE id = ?",
+        "params": [
+          1
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "space_name": "Chapel Street shop",
+            "landlord": "Elm City Properties",
+            "monthly_rent": 2400.0,
+            "next_due": "2026-09-02",
+            "notes": null
+          }
+        ],
+        "desk_date_today": "2026-08-31"
+      },
+      "matches_db": true
+    }
+  ],
+  "all_passed": true,
+  "database_unchanged": {
+    "sha1_working_copy": "f447ca6a2766a90f3c1f81215c8f774ab109ea4c",
+    "sha1_original": "f447ca6a2766a90f3c1f81215c8f774ab109ea4c",
+    "unchanged": true,
+    "note": "All three tools are read-only, so no tool call updates the database; the working copy still matches the original."
+  },
+  "rerun": "scripts/mcp_smoke.py repeats these tests over stdio from .mcp.json (writes this same file)."
+}

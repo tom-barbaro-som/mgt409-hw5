@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campus Customs: Desk Tickets</title>
+<style>
+  :root {
+    --yale: #00356b; --yale-light: #286dc0; --ink: #1f2933; --muted: #5f6b7a;
+    --line: #d9dee5; --bg: #f6f8fb; --card: #ffffff; --expected: #fffdf5; --actual: #f3f7fc;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         color: var(--ink); background: var(--bg); }
+  header { background: var(--yale); color: #fff; padding: 18px 28px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: .85; font-size: 14px; }
+  nav { display: flex; gap: 4px; padding: 0 28px; background: #fff; border-bottom: 1px solid var(--line);
+        position: sticky; top: 0; z-index: 1; }
+  nav button { border: 0; background: none; padding: 12px 16px; font: inherit; color: var(--muted);
+               cursor: pointer; border-bottom: 3px solid transparent; }
+  nav button:hover { color: var(--yale); }
+  nav button[aria-selected="true"] { color: var(--yale); border-bottom-color: var(--yale); font-weight: 600; }
+  main { max-width: 920px; margin: 24px auto; padding: 0 20px 40px; }
+  section.tab { display: none; }
+  section.tab.active { display: block; }
+  h2 { margin: 0 0 4px; color: var(--yale); font-size: 20px; }
+  .sub { color: var(--muted); margin: 0 0 18px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 16px 20px; margin-bottom: 18px; }
+  .card h3 { margin: 0 0 10px; font-size: 15px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  dl.facts { display: grid; grid-template-columns: 150px 1fr; gap: 4px 12px; margin: 0; }
+  dl.facts dt { color: var(--muted); }
+  dl.facts dd { margin: 0; }
+  .guess-label { margin: 0 0 6px; font-size: 12px; color: #8a6d00; font-style: italic; }
+  .guess { margin: 0; padding: 12px 16px; border-left: 4px solid #c9a227; background: var(--expected);
+           border-radius: 0 6px 6px 0; color: var(--ink); white-space: pre-wrap; }
+  .editable { min-height: 160px; padding: 12px 14px; border: 1px dashed #c9b86a; border-radius: 6px;
+              background: var(--expected); outline: none; white-space: pre-wrap; }
+  .editable:focus { border-style: solid; border-color: var(--yale-light); background: #fff; }
+  .editable:empty::before { content: attr(data-placeholder); color: #9aa5b1; }
+  .card.expected h3 { color: #8a6d00; }
+  .card.actual { background: var(--actual); }
+  .card.actual h3 { color: var(--yale-light); }
+  .pending { color: var(--muted); font-style: italic; margin: 0; }
+  .coming { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 18px; font-style: italic; }
+  .reflection h3 { margin-top: 18px; } .reflection h3:first-child { margin-top: 0; }
+  .reflection ul { margin: 6px 0 0; padding-left: 22px; } .reflection li { margin-bottom: 8px; }
+  .reflection li ul { margin-top: 6px; } .reflection li li { margin-bottom: 3px; }
+  .grade { display: inline-block; background: var(--yale); color: #fff; border-radius: 4px; padding: 0 7px; font-size: 13px; }
+  .ledger-note { margin: 0; line-height: 1.8; }
+  table.ledger { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.ledger th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); border-bottom: 2px solid var(--line); padding: 6px 8px; }
+  table.ledger td { border-bottom: 1px solid var(--line); padding: 8px; vertical-align: top; }
+  table.ledger .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  table.ledger .out { color: #b3261e; font-weight: 600; }
+  table.ledger tr.start td { background: var(--actual); font-weight: 600; }
+  table.ledger tr.ledger-pending td { background: #fff8e6; }
+  .recon p { margin: 4px 0; } .pending-note { color: var(--muted); font-size: 13px; }
+  .toolbar { display: flex; gap: 12px; align-items: center; justify-content: flex-end; margin-bottom: 14px;
+             font-size: 13px; color: var(--muted); }
+  .toolbar button { background: var(--yale); color: #fff; border: 0; border-radius: 6px; padding: 7px 12px;
+                    font: inherit; cursor: pointer; }
+  .toolbar button:hover { background: var(--yale-light); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Campus Customs: Desk Tickets</h1>
+  <p>Manager predictions vs. what the agent team actually did · Desk date ("today"): 2026-08-31</p>
+</header>
+
+<nav role="tablist">
+  <button role="tab" data-tab="t101" aria-selected="true">Ticket 101</button>
+  <button role="tab" data-tab="t102">Ticket 102</button>
+  <button role="tab" data-tab="t103">Ticket 103</button>
+  <button role="tab" data-tab="cash">Cash</button>
+  <button role="tab" data-tab="reflection">Reflection</button>
+</nav>
+
+<main>
+
+  <!-- ===================== Ticket 101 ===================== -->
+  <section class="tab active" id="t101" role="tabpanel">
+    <h2>Ticket 101: Bulldog tee</h2>
+    <p class="sub">customer_order · opened 2026-08-31 09:15</p>
+    <div class="card">
+      <h3>Ticket (from the database)</h3>
+      <dl class="facts">
+        <dt>Requester</dt><dd>Tauhid Zaman</dd>
+        <dt>Item</dt><dd>CC-TEE-WHITE (Classic Bulldog Tee), size S, qty 1</dd>
+        <dt>Linked</dt><dd>Invoice 501</dd>
+        <dt>Notes</dt><dd>Needs a tee in size S.</dd>
+      </dl>
+    </div>
+    <div class="card expected">
+      <h3>Expected</h3>
+      <p class="guess-label">My prediction (recorded before the agents ran)</p>
+      <blockquote class="guess" data-key="expected-101">I expect the Boss will first ask the Inventory agent to check inventory. If the Inventory agent confirms the item is in stock, it will delegate to Accounting to check the invoice's current status and complete the transaction (if it was incomplete at the time of delegation). This prediction would call two of the three current MCP tools, check_inventory and get_invoice_status.</blockquote>
+    </div>
+    <div class="card actual">
+      <h3>Actual</h3>
+      <p class="pending">I ran this ticket third, after resolving the unpaid invoice 501 issue with ticket 103. This order could not be immediately fulfilled because the item is out of stock, and the replenishing shipment was awaiting invoice 501 payment. This ticket was resolved with a draft Customer Service message that I approved. However, the agents have a gap - they do not know when invoice 501's stock is delivered. Ideally, the agents would know to circle back to ticket 501 and fulfill the order at that point in time.</p>
+    </div>
+  </section>
+
+  <!-- ===================== Ticket 102 ===================== -->
+  <section class="tab" id="t102" role="tabpanel">
+    <h2>Ticket 102: Rent due</h2>
+    <p class="sub">rent_notice · opened 2026-08-31 11:05</p>
+    <div class="card">
+      <h3>Ticket (from the database)</h3>
+      <dl class="facts">
+        <dt>Requester</dt><dd>Elm City Properties</dd>
+        <dt>Linked</dt><dd>Lease 1</dd>
+        <dt>Notes</dt><dd>Email: shop rent due in 2 days.</dd>
+      </dl>
+    </div>
+    <div class="card expected">
+      <h3>Expected</h3>
+      <p class="guess-label">My prediction (recorded before the agents ran)</p>
+      <blockquote class="guess" data-key="expected-102">I think the Boss will delegate to Facilities to confirm the bill is accurate. After that, I think Facilities will delegate to Accounting to determine if the rent has been paid yet and if sufficient funds are available (if the bill is unpaid). If unpaid and funds are available, Accounting will make a plan to pay the bill. This should use the MCP tool get_lease_details.</blockquote>
+    </div>
+    <div class="card actual">
+      <h3>Actual</h3>
+      <p class="pending">I started with this ticket. It worked as expected, with the Boss delegating to Facilities and then to Accounting. I approved the payment without any issues, and the checking balance updated appropriately. It was not clear to me which tools the agents used - the dashboard updates were in natural language [good for convenient human monitoring, not great for detailed auditing].</p>
+    </div>
+  </section>
+
+  <!-- ===================== Ticket 103 ===================== -->
+  <section class="tab" id="t103" role="tabpanel">
+    <h2>Ticket 103: Bulk hoodie discount</h2>
+    <p class="sub">price_override · opened 2026-08-31 16:55</p>
+    <div class="card">
+      <h3>Ticket (from the database)</h3>
+      <dl class="facts">
+        <dt>Requester</dt><dd>Yale AI Club</dd>
+        <dt>Item</dt><dd>CC-HOOD-NAVY (Basic Hoodie Big Yale), size M, qty 20</dd>
+        <dt>Linked</dt><dd>none</dd>
+        <dt>Notes</dt><dd>Student org wants 20 hoodies, size M, asking for a bulk discount.</dd>
+      </dl>
+    </div>
+    <div class="card expected">
+      <h3>Expected</h3>
+      <p class="guess-label">My prediction (recorded before the agents ran)</p>
+      <blockquote class="guess" data-key="expected-103">I expect the Boss will first ask the Inventory agent to check inventory. If the Inventory agent confirms the item is in sufficient stock, it will delegate back to the Boss to decide if a bulk discount is acceptable to Campus Customs. The Boss will make an executive decision and delegate any potential billing to Accounting (who will wait for human approval). Ideally, the Boss will flag it's decision to human observers, who can approve or disapprove the decision. This prediction would call one of the three current MCP tools, check_inventory.</blockquote>
+    </div>
+    <div class="card actual">
+      <h3>Actual</h3>
+      <p class="pending">I attempted this ticket second. The process worked roughly as expected, with the Boss delegating to Inventory and then Accounting. The first issue with this ticket was unpaid invoice 501. At first, the agents asked me to make approvals for the order, but each one failed pending the resolution of invoice 501. The agents didn't know how to ask me for approval for that invoice, so I asked Claude to modify the dashboard, which now works as intended. However, the ticket cannot be fully resolved because there is insufficient cash to order additional hoodies after paying invoice 501 and rent. The dashboard appears to work appropriately, but the ticket cannot be fully resolved.</p>
+    </div>
+  </section>
+
+  <!-- ===================== Cash ===================== -->
+  <section class="tab" id="cash" role="tabpanel">
+    <h2>Cash</h2>
+    <div class="card">
+      <h3>My entry</h3>
+      <p class="ledger-note">Ticket 102: Paid $2,400 in rent. Ending checking balance is $1,000.</p>
+      <h3 style="margin-top:14px">Completed entries (filled in from the working database)</h3>
+      <p class="ledger-note">
+      Ticket 101: Paid $840 on invoice 501 (Bulldog Print Co), which unblocked the size S tee reprint. Ending checking balance is $160.<br>
+      Ticket 103: No money moved. The $49 price override was approved (no cash). The $264 restock PO is still pending and cannot be paid from $160. Ending checking balance is $160.
+      </p>
+    </div>
+    <div class="card">
+      <h3>Itemized log by ticket (order of approval)</h3>
+      <table class="ledger">
+        <thead><tr><th>Ticket</th><th>Action</th><th>Approval / record</th><th class="num">Cash</th><th class="num">Checking after</th></tr></thead>
+        <tbody>
+          <tr class="start"><td>—</td><td>Opening balance (original <code>campus_customs.db</code>)</td><td>—</td><td class="num">—</td><td class="num">$3,400.00</td></tr>
+          <tr><td>102</td><td>Rent, lease 1 → Elm City Properties</td><td>approval #1 · payment #1 · approved by Tom</td><td class="num out">−$2,400.00</td><td class="num">$1,000.00</td></tr>
+          <tr><td>101</td><td>Invoice 501 → Bulldog Print Co</td><td>approval #4 · payment #2 · approved by Tom</td><td class="num out">−$840.00</td><td class="num">$160.00</td></tr>
+          <tr><td>103</td><td>Price override #3: $49.00/hoodie × 20 (15.5% off)</td><td>approved by Tom; revenue is not modeled</td><td class="num">$0.00</td><td class="num">$160.00</td></tr>
+          <tr><td>101</td><td>Customer update draft #5 to Tauhid Zaman</td><td>approved by Tom; <b>not sent</b></td><td class="num">$0.00</td><td class="num">$160.00</td></tr>
+          <tr class="ledger-pending"><td>103</td><td>PO #2: 12 × CC-HOOD-NAVY M from Bulldog Print Co ($264.00)</td><td><b>still pending</b>: 4 approvals refused while invoice 501 blocked the vendor, 2 refused for insufficient funds</td><td class="num">$0.00</td><td class="num">$160.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card recon">
+      <h3>Reconciliation</h3>
+      <p>$3,400.00 − $3,240.00 paid = <b>$160.00</b> (this ledger)
+      = <b>$160.00</b> (<code>cash_accounts</code> in <code>campus_customs_new.db</code>)
+      = <b>$160.00</b> (live dashboard / <code>GET /api/cash</code>) ✓ all match.</p>
+      <p class="pending-note">Pending, not paid: $264.00 (PO #2). It would leave −$104.00, so the pay tool refuses it. Checked 2026-10-13T19:50:42+00:00 (source: <code>output/resolved_tickets.json</code>).</p>
+    </div>
+  </section>
+
+  <!-- ===================== Reflection ===================== -->
+  <section class="tab" id="reflection" role="tabpanel">
+    <h2>Reflection</h2>
+    <div class="card reflection">
+      <h3>Ticket 101</h3>
+      <ul><li>The agents did the right thing, for now, but there is no mechanism making sure they circle back when invoice 501's stock is delivered. <strong class="grade">C+</strong></li><li>Actual performance was generally what I expected, although I did not predict the stockout issue. I think the actual run went roughly how I expected and how I'd like it to.</li></ul>
+      <h3>Ticket 102</h3>
+      <ul><li>The agents handled this (simple) ticket perfectly. <strong class="grade">A+</strong></li><li>Actual performance was what I expected, and I have no improvement notes for the agents.</li></ul>
+      <h3>Ticket 103</h3>
+      <ul><li>After fixing the invoice 501 issue (I initially couldn't approve the invoice because it wasn't a part of the original ticket), the agents asked for the appropriate approvals. However, the order could not be fulfilled immediately because there was insufficient cash to order additional hoodies. I would have liked the agents to draft a Customer Service message explaining how we'd like to complete the order, but are pending an upcoming shipment (buying time for revenue to give us the cash to actually place said order). <strong class="grade">B+</strong></li><li>Without knowing the stock shortage issues were going to pop up, the agents generally did what I expected.</li></ul>
+      <h3>Overall</h3>
+      <ul><li>One agent would have been simpler, but more expensive, to implement. I think part of the issues my agents had were gaps in communication. For example, the agents didn't know how to ask a human to approve invoice 501 at first. They were rejecting other approvals because they knew 501 was required, but there was nothing asking the human to approve 501.</li><li>Campus Customs can now handle lots of simple tasks that could have come up. For example:<ul><li>Identify which vendor(s) is best to restock all out-of-stock items</li><li>Identify unpaid invoices and prioritize which need to be paid first</li><li>Send Customer Service emails apologizing for delay (if a customer circled back after not having their order addressed immediately)</li></ul></li><li>Campus Customs probably could not handle all potential problems, such as:<ul><li>Identify priority items for potential discount sales (to offload stale inventory)</li><li>Determine which suppliers are best to work with</li><li>Identify new designs for items in the upcoming season</li></ul></li></ul>
+    </div>
+  </section>
+</main>
+
+<script>
+  // Tabs (the selected tab is remembered in the URL hash)
+  const tabs = document.querySelectorAll('nav button');
+  function show(id) {
+    tabs.forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
+    document.querySelectorAll('section.tab').forEach(s => s.classList.toggle('active', s.id === id));
+    history.replaceState(null, '', '#' + id);
+  }
+  tabs.forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
+  if (location.hash && document.getElementById(location.hash.slice(1))) show(location.hash.slice(1));
+
+</script>
+</body>
+</html>

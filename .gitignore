@@ -1,0 +1,27 @@
+# Secrets: never commit keys. Use .env.example as the template.
+.env
+*.env
+!.env.example
+Portkey.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Node / Vite
+frontend/node_modules/
+frontend/dist/
+*.tsbuildinfo
+
+# SQLite side files (the .db files themselves ARE committed)
+data/*.db-wal
+data/*.db-shm
+data/*.db-journal
+
+# Local tooling and OS files
+.claude/
+.DS_Store
+
+# Not part of this assignment (separate project kept in this folder)
+stock_regression/

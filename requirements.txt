@@ -1,0 +1,9 @@
+fastmcp>=4.0.11
+# PydanticAI agents; [mcp] is needed for MCPToolset (agents reach the shop only through the MCP server)
+pydantic-ai-slim[openai,mcp]>=2.54.0
+python-dotenv>=1.2.0
+# FastAPI backend (next problems)
+fastapi>=0.142.0
+uvicorn[standard]>=0.54.0
+# Only for scripts/capture_board.py (dashboard screenshots; drives the installed Google Chrome):
+playwright>=1.50
