@@ -199,5 +199,5 @@
     "unchanged": true,
     "note": "All three tools are read-only, so no tool call updates the database; the working copy still matches the original."
   },
-  "rerun": "scripts/mcp_smoke.py repeats these tests over stdio from .mcp.json (writes this same file)."
+  "rerun": "scripts/mcp_smoke.py repeats these tests over stdio from .mcp.json and writes output/mcp_smoke_rerun.json (this file is not overwritten)."
 }

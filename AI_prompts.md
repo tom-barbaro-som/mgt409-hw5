@@ -488,3 +488,5 @@ I have included the expected file layout as a screenshot. Please move files to m
 **README:** rewritten with setup, `.env`, two ways to reset (`scripts/reset_db.py`, or copying `campus_customs.db` over `campus_customs_new.db`), and how to start the MCP server, FastAPI backend, and dashboard.
 
 **Pushed** to the public repo https://github.com/tom-barbaro-som/mgt409-hw5. The URL is saved in `output/github_url.txt`.
+
+**Follow-up:** a fresh clone of the repo was verified (all expected files present; MCP smoke 4/4 passing from the relative `.mcp.json`). `scripts/mcp_smoke.py` now writes `output/mcp_smoke_rerun.json` instead of overwriting the Problem 4 evidence in `output/mcp_smoke.json`.

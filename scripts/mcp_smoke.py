@@ -21,7 +21,7 @@ from fastmcp import Client
 HW5_DIR = Path(__file__).resolve().parent.parent
 MCP_JSON = HW5_DIR / ".mcp.json"
 DB_PATH = HW5_DIR / "data" / "campus_customs_new.db"
-OUT_PATH = HW5_DIR / "output" / "mcp_smoke.json"
+OUT_PATH = HW5_DIR / "output" / "mcp_smoke_rerun.json"
 
 
 def sha1(path: Path) -> str:

@@ -65,7 +65,7 @@ The backend starts the MCP server for you (over stdio, from `.mcp.json`), so you
 
 ```bash
 python mcp_server/server.py          # stdio MCP server on the working DB
-python scripts/mcp_smoke.py          # calls the tools through .mcp.json and checks them against the DB
+python scripts/mcp_smoke.py          # calls tools via .mcp.json, checks them against the DB → output/mcp_smoke_rerun.json
 ```
 
 In **Claude Code**, open this folder and approve the `campus-customs` server from `.mcp.json`; its 20 tools then appear in the session. Details are in [`mcp_server/README.md`](mcp_server/README.md).
